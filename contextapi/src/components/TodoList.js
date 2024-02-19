@@ -8,15 +8,18 @@ const TodoList = () => {
     const { isDarkTheme, lightTheme, darkTheme, changeTheme } = useContext(ThemeContext);
     const theme = isDarkTheme ? darkTheme : lightTheme;
     const { todoContainer, listItem, buttonContainer, buttonText, input } = styles
-    const { todos, addTodo } = useContext(TodoListContext);
+    const { todos, addTodo, removeTodo } = useContext(TodoListContext);
 
-    const handleChange = (text) =>{
+    const handleChange = (text) => {
         setTodo(text);
     }
 
-    const handleAddToDoPress =() =>{
+    const handleAddToDoPress = () => {
         addTodo(todo);
         setTodo('')
+    }
+    const handleRemoveTodo = (id) => {
+        removeTodo(id);
     }
     return (
         <View style={[todoContainer, theme]}>
@@ -26,7 +29,9 @@ const TodoList = () => {
                     data={todos}
                     keyExtractor={(todo) => todo.id}
                     renderItem={({ item }) => {
-                        return <Text style={[listItem, theme]}>{item.text}</Text>
+                        return <TouchableOpacity onPress={() => handleRemoveTodo(item.id)}>
+                            <Text style={[listItem, theme]}>{item.text}</Text>
+                        </TouchableOpacity>
                     }}
                     showsVerticalScrollIndicator={false}
 
@@ -34,10 +39,10 @@ const TodoList = () => {
             ) : <Text style={[listItem, theme]}>You have not to dos
             </Text>}
 
-            <TextInput 
-            value = {todo}
-            onChangeText={(text)=>{handleChange(text)}}
-            style={input}/>
+            <TextInput
+                value={todo}
+                onChangeText={(text) => { handleChange(text) }}
+                style={input} />
 
             <TouchableOpacity style={buttonContainer} onPress={handleAddToDoPress}>
                 <Text style={buttonText}>
