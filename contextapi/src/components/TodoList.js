@@ -1,35 +1,62 @@
-import React, { Component } from "react";
+import React, { Component, useContext, useState } from "react";
 
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
 import { ThemeContext } from "../contexts/ThemeContext";
-class TodoList extends Component {
-    static contextType = ThemeContext;
+import { TodoListContext } from "../contexts/TodoListContext";
+const TodoList = () => {
+    const [todo, setTodo] = useState('');
+    const { isDarkTheme, lightTheme, darkTheme, changeTheme } = useContext(ThemeContext);
+    const theme = isDarkTheme ? darkTheme : lightTheme;
+    const { todoContainer, listItem, buttonContainer, buttonText, input } = styles
+    const { todos, dispatch } = useContext(TodoListContext);
 
-    render() {
-        const { isDarkTheme, lightTheme, darkTheme, changeTheme } = this.context;
-
-        const theme = isDarkTheme ? darkTheme : lightTheme;
-
-        const { todoContainer, items, buttonContainer, buttonText } = styles
-        return (
-            <View style={[todoContainer, theme]}>
-                <Text style={[items, theme]}>
-                    Plan the family trim
-                </Text>
-                <Text style={[items, theme]}>
-                    Go shopping for dinner
-                </Text>
-                <Text style={[items, theme]}>
-                    Go for a walk
-                </Text>
-                <TouchableOpacity style={buttonContainer} onPress={changeTheme}>
-                    <Text style={buttonText}>
-                        Change Theme
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        )
+    const handleChange = (text) => {
+        setTodo(text);
     }
+
+    const handleAddToDoPress = () => {
+        dispatch({ type: 'ADD_TODO', text: todo })
+        setTodo('')
+    }
+    const handleRemoveTodo = (id) => {
+        dispatch({ type: 'REMOVE_TODO', id })
+    }
+    return (
+        <View style={[todoContainer, theme]}>
+
+            {todos.length ? (
+                <FlatList
+                    data={todos}
+                    keyExtractor={(todo) => todo.id}
+                    renderItem={({ item }) => {
+                        return <TouchableOpacity onPress={() => handleRemoveTodo(item.id)}>
+                            <Text style={[listItem, theme]}>{item.text}</Text>
+                        </TouchableOpacity>
+                    }}
+                    showsVerticalScrollIndicator={false}
+
+                />
+            ) : <Text style={[listItem, theme]}>You have not to dos
+            </Text>}
+
+            <TextInput
+                value={todo}
+                onChangeText={(text) => { handleChange(text) }}
+                style={input} />
+
+            <TouchableOpacity style={buttonContainer} onPress={handleAddToDoPress}>
+                <Text style={buttonText}>
+                    Add new to do
+                </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={buttonContainer} onPress={changeTheme}>
+                <Text style={buttonText}>
+                    Change Theme
+                </Text>
+            </TouchableOpacity>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -37,8 +64,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'dimgrey',
         alignItems: 'center',
         justifyContent: 'space-around',
+        flex: 1
     },
-    items: {
+    listItem: {
         color: 'white',
         fontSize: 18,
         paddingVertical: 10,
@@ -49,12 +77,24 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 15,
+
+
 
     },
     buttonText: {
         color: 'white',
         fontSize: 18,
 
+    },
+    input: {
+        width: '100%',
+        backgroundColor: 'white',
+        fontSize: 15,
+        borderWidth: 1,
+        borderColor: 'black',
+        marginVertical: 15,
+        padding: 5
     }
 })
 
