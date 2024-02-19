@@ -1,43 +1,91 @@
-import React, { Component } from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import React, { Component, useContext } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemeContext } from "../contexts/ThemeContext";
-class Navbar extends Component {
-    // static contextType = ThemeContext;
-    render() {
-        const { headerContainer, headerText, headerTabContainer, headerTab } = styles;
+import { AuthContext } from "../contexts/AuthContext";
 
-        return (
-            <ThemeContext.Consumer>
-                {(context) => {
-                    const { isDarkTheme, lightTheme, darkTheme } = context;
 
-                    const theme = isDarkTheme ? darkTheme : lightTheme;
-                    return (
-                        <View style={[headerContainer, theme]}>
-                            <Text style={[headerText, theme]}>
-                                OakAcademy
-                            </Text>
+const Navbar = () => {
+    const { isDarkTheme, lightTheme, darkTheme } = useContext(ThemeContext)
+    const { isLoggedIn, changeAuthStatus } = useContext(AuthContext)
+    const theme = isDarkTheme ? darkTheme : lightTheme;
+    const { headerContainer, headerText, headerTabContainer, headerTab } = styles;
 
-                            <View style={headerTabContainer}>
-                                <Text style={headerTab}>
-                                    Overview
-                                </Text>
-                                <Text style={headerTab}>
-                                    Contact
-                                </Text>
-                                <Text style={headerTab}>
-                                    Support
-                                </Text>
-                            </View>
-                        </View>
-                    )
-                }}
-
-            </ThemeContext.Consumer>
-
-        )
-    }
+    return (
+        <View style={[headerContainer, theme]}>
+            <Text style={[headerText, theme]}>
+                OakAcademy
+            </Text>
+            <TouchableOpacity onPress={changeAuthStatus}>
+                <Text>{isLoggedIn ? 'Logged in' : 'Logged out'}</Text>
+            </TouchableOpacity>
+            <View style={headerTabContainer}>
+                <Text style={headerTab}>
+                    Overview
+                </Text>
+                <Text style={headerTab}>
+                    Contact
+                </Text>
+                <Text style={headerTab}>
+                    Support
+                </Text>
+            </View>
+        </View>
+    )
 }
+
+
+
+// class Navbar extends Component {
+//     // static contextType = ThemeContext;
+//     render() {
+//         const { headerContainer, headerText, headerTabContainer, headerTab } = styles;
+
+//         return (
+//             <AuthContext.Consumer>
+//                 {(authContext) => {
+//                     return (
+
+//                         <ThemeContext.Consumer>
+//                             {(themeContext) => {
+//                                 const { isDarkTheme, lightTheme, darkTheme } = themeContext;
+//                                 const { isLoggedIn, changeAuthStatus } = authContext;
+//                                 const theme = isDarkTheme ? darkTheme : lightTheme;
+
+//                                 return (
+//                                     <View style={[headerContainer, theme]}>
+//                                         <Text style={[headerText, theme]}>
+//                                             OakAcademy
+//                                         </Text>
+//                                         <TouchableOpacity onPress={changeAuthStatus}>
+//                                             <Text>{isLoggedIn ? 'Logged in' : 'Logged out'}</Text>
+//                                         </TouchableOpacity>
+//                                         <View style={headerTabContainer}>
+//                                             <Text style={headerTab}>
+//                                                 Overview
+//                                             </Text>
+//                                             <Text style={headerTab}>
+//                                                 Contact
+//                                             </Text>
+//                                             <Text style={headerTab}>
+//                                                 Support
+//                                             </Text>
+//                                         </View>
+//                                     </View>
+//                                 )
+//                             }}
+
+//                         </ThemeContext.Consumer>
+//                     )
+//                 }}
+//             </AuthContext.Consumer>
+
+
+
+
+
+//         )
+//     }
+// }
 
 const styles = StyleSheet.create({
     headerContainer: {
