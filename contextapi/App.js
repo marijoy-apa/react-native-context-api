@@ -8,13 +8,15 @@ import TodoListContextProvider from './src/contexts/TodoListContext';
 
 const App = (props) => {
     return (
-        <View>
+        <View style={{flex: 1}}>
             <AuthContextProvider>
 
                 <ThemeContextProvider>
+                    <TodoListContextProvider>
+                        <Navbar />
+                        <TodoList />
+                    </TodoListContextProvider>
 
-                    <Navbar />
-                    <TodoList />
                 </ThemeContextProvider>
             </AuthContextProvider>
 
